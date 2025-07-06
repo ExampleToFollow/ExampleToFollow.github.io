@@ -389,13 +389,13 @@
             <br>
             <button class="effect-btn" onclick="launchConfetti()">🎊 Confeti</button>
             <button class="effect-btn" onclick="launchBalloons()">🎈 Globos</button>
-            <button class="effect-btn" onclick="createSakura()">🌸 Sakura</button>
+            <button class="effect-btn" onclick="launchSakura()">🌸 Sakura</button>
         </div>
     </div>
 
     <div class="music-player" onclick="toggleMusic()" id="musicBtn">🎵</div>
 
-    <audio id="backgroundMusic" loop preload="auto">
+    <audio id="backgroundMusic" loop preload="auto" autoplay>
         <source src="background-music.mp3" type="audio/mpeg">
         <source src="background-music.ogg" type="audio/ogg">
     </audio>
@@ -410,23 +410,23 @@
     <script>
         const animeQuotes = {
             snk: [
-                "¡Si no luchamos, no ganamos! ¡Juntas somos invencibles! ⚔️",
-                "¡Dedica tu corazón! ¡Como nosotras dedicamos nuestra amistad! 💪",
-                "¡La libertad se conquista luchando! ¡Y tú nunca te rindes! ✨"
+                "¡Tatakae! ¡Lucha por tus sueños como Eren! ⚔️",
+                "¡Shinzou wo Sasageyo! ¡Dedica tu corazón a ser feliz! 💪",
+                "¡Somos libres como las alas de la libertad! ✨"
             ],
             inuyasha: [
-                "¡Nuestra amistad es tan fuerte como el Tessaiga! 🗡️",
-                "¡Como Kagome, siempre sabes cómo salvar el día! 🏹",
-                "¡Juntas podemos vencer cualquier demonio! 💎"
+                "¡Osuwari! Pero tú siempre te levantas más fuerte 🏹",
+                "Como el poder del Tessaiga, tu fuerza interior es increíble 🗡️",
+                "¡Kagome! ¡Inuyasha! Una amistad que trasciende el tiempo 💎"
             ],
             aoharuride: [
-                "¡Las personas especiales permanecen para siempre! 🌸",
-                "¡Tu corazón siempre estará en el mío! 💙",
-                "¡Eres mi persona favorita en todo el mundo! ✨"
+                "Los corazones pueden cambiar, pero los lazos verdaderos permanecen 🌸",
+                "Como Futaba, siempre encuentras la manera de brillar 💙",
+                "La juventud es hermosa cuando se vive con valentía ✨"
             ]
         };
 
-        let musicPlaying = false;
+        let musicPlaying = true;
         let audioContext = null;
         let candlesBlown = false;
         let backgroundMusic = null;
@@ -482,12 +482,49 @@
             }
         }
 
+        function launchSakura() {
+            console.log('Lanzando sakura...');
+            
+            for(let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    const sakura = document.createElement('div');
+                    sakura.innerHTML = '🌸';
+                    sakura.style.cssText = `
+                        position: fixed;
+                        left: ${Math.random() * 90 + 5}%;
+                        top: -50px;
+                        font-size: 2rem;
+                        z-index: 9999;
+                        pointer-events: none;
+                        animation: fall ${4 + Math.random() * 3}s linear forwards;
+                        color: #ffb3d9;
+                    `;
+                    
+                    document.body.appendChild(sakura);
+                    
+                    setTimeout(() => {
+                        if (sakura.parentNode) sakura.remove();
+                    }, 8000);
+                    
+                }, i * 150);
+            }
+        }
+
         function createSakura() {
+            // Función simple para efectos automáticos
             const sakura = document.createElement('div');
-            sakura.className = 'sakura';
             sakura.innerHTML = '🌸';
-            sakura.style.left = Math.random() * 100 + '%';
-            sakura.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            sakura.style.cssText = `
+                position: fixed;
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                font-size: 1.5rem;
+                z-index: 1000;
+                pointer-events: none;
+                animation: fall ${5 + Math.random() * 3}s linear forwards;
+                color: #87ceeb;
+            `;
+            
             document.body.appendChild(sakura);
             
             setTimeout(() => {
@@ -623,14 +660,31 @@
         setInterval(createSakura, 2000);
         
         window.addEventListener('load', () => {
+            // Inicializar música automáticamente
+            setTimeout(() => {
+                initAudio();
+                if (backgroundMusic) {
+                    backgroundMusic.play().catch(() => {
+                        console.log('Auto-play bloqueado por el navegador');
+                    });
+                }
+            }, 1000);
+            
             setTimeout(() => {
                 const animes = ['snk', 'inuyasha', 'aoharuride'];
                 const randomAnime = animes[Math.floor(Math.random() * animes.length)];
                 showQuote(randomAnime);
-            }, 1000);
+            }, 2000);
         });
 
-        document.addEventListener('click', initAudio, { once: true });
+        // Intentar reproducir música con cualquier interacción
+        document.addEventListener('click', () => {
+            if (backgroundMusic && backgroundMusic.paused && musicPlaying) {
+                backgroundMusic.play().catch(() => {
+                    console.log('No se pudo reproducir la música');
+                });
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
